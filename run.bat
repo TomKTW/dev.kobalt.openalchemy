@@ -1,0 +1,1 @@
+start "" .\jdk8u302-b08-jre\bin\javaw.exe -jar game.jar

@@ -1,62 +1,63 @@
 plugins {
-    java
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
     id("com.github.johnrengelman.shadow") version "6.0.0"
 }
 
 group = "dev.kobalt"
 version = "0000.00.00.00.00.00.000"
 
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8
-
 repositories {
     mavenCentral()
-}
-
-@Suppress("unused")
-fun DependencyHandler.general(module: String, version: String) = "$module:$version"
-
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
-    api("com.badlogicgames.gdx:gdx:1.10.0")
-    api(group = "io.github.libktx", name = "ktx-app", version = "1.10.0-b4")
-    api(group = "io.github.libktx", name = "ktx-assets", version = "1.10.0-b4")
-    api(group = "io.github.libktx", name = "ktx-assets-async", version = "1.10.0-b4")
-    api(group = "io.github.libktx", name = "ktx-async", version = "1.10.0-b4")
-    api(group = "io.github.libktx", name = "ktx-collections", version = "1.10.0-b4")
-    api(group = "io.github.libktx", name = "ktx-graphics", version = "1.10.0-b4")
-    api(group = "io.github.libktx", name = "ktx-math", version = "1.10.0-b4")
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:1.10.0")
-    implementation("com.badlogicgames.gdx:gdx-platform:1.10.0:natives-desktop")
-}
-
-java {
-    withSourcesJar()
-    withJavadocJar()
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+fun general(module: String, version: String) = "$module:$version"
+fun kotlinx(module: String, version: String) = "org.jetbrains.kotlinx:kotlinx-$module:$version"
+fun libgdx(version: String) = "com.badlogicgames.gdx:gdx:$version"
+fun libgdx(module: String, version: String) = "com.badlogicgames.gdx:gdx-$module:$version"
+fun libktx(module: String, version: String) = "io.github.libktx:ktx-$module:$version"
+
+fun DependencyHandler.libgdxEngine() {
+    implementation(libgdx("1.10.0"))
+    implementation(libgdx("backend-lwjgl3", "1.10.0"))
+    implementation(libgdx("platform", "1.10.0:natives-desktop"))
+}
+
+fun DependencyHandler.libktxExtensions() {
+    implementation(libktx("app", "1.10.0-b4"))
+    implementation(libktx("assets", "1.10.0-b4"))
+    implementation(libktx("assets-async", "1.10.0-b4"))
+    implementation(libktx("async", "1.10.0-b4"))
+    implementation(libktx("collections", "1.10.0-b4"))
+    implementation(libktx("graphics", "1.10.0-b4"))
+    implementation(libktx("math", "1.10.0-b4"))
+}
+
+fun DependencyHandler.standardLibrary() {
+    implementation(kotlin("stdlib", "1.6.10"))
+}
+
+fun DependencyHandler.coroutines() {
+    implementation(kotlinx("coroutines-core","1.6.0"))
+}
+
+dependencies {
+    standardLibrary()
+    coroutines()
+    libgdxEngine()
+    libktxExtensions()
+}
+
 tasks {
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveFileName.set("game.jar")
+        archiveFileName.set("openalchemy.jar")
         mergeServiceFiles()
+        // minimize()
         manifest {
-            attributes("Main-Class" to "dev.kobalt.game.alchemy.MainKt")
+            attributes("Main-Class" to "dev.kobalt.openalchemy.jvm.MainKt")
         }
-        //        minimize ()
-        /*
-        exclude(
-            "LICENSE.txt",
-            "NOTICE",
-            "manifest.proto",
-            "README.md",
-            "versions-offline/**/*"
-        )
-         */
     }
 }

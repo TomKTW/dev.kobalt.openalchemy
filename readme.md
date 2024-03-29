@@ -3,6 +3,12 @@ OpenAlchemy
 
 This is a wrapper for Alchemy Deluxe game made by PopCap Games (back when they were making good software).
 
+---
+
+More information is available [here](https://openalchemy.kobalt.dev/).
+
+---
+
 ## Requirements
 
 - Java 8 Runtime
